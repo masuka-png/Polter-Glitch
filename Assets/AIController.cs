@@ -21,14 +21,20 @@ public class AIController : MonoBehaviour
     [SerializeField] private float stopAtDistance = 0.5f;
     [SerializeField] private float detectionRange = 5f;
     [SerializeField] private float viewAngle = 90f;
-    [SerializeField] private flaot losePlayerTime = 3f;
+    [SerializeField] private float losePlayerTime = 3f;
 
     private UnityEngine.AI.NavMeshAgent _agent;
     private Animator _animator;
+    private EnemyState _state = EnemyState.Patrolling;
     private int _currentPatrolIndex;
     private bool _isWaiting;
-    private flaot _timeSincePlayerLost;
-  
+    private float _timeSincePlayerLost;
+
+
+    private void Start()
+    {
+        GoToNextPatrolPoint();
+    }
 
 
     private void Awake()
@@ -40,7 +46,7 @@ public class AIController : MonoBehaviour
 
     private void Update()
     {
-        var distanceToPlayer = Vector3.Distance(player.position, transform.position)
+        var distanceToPlayer = Vector3.Distance(player.position, transform.position);
 
         switch (_state)
         {
@@ -57,19 +63,24 @@ public class AIController : MonoBehaviour
                 FollowPlayer();
                 if (!CanSeePlayer())
                 {
-                    _timeSincePlayerLost += losePlayerTime.deltaTime;
+                    _timeSincePlayerLost += Time.deltaTime;
                     if (_timeSincePlayerLost >= losePlayerTime)
                     {
                         _state = EnemyState.Patrolling;
                         GotoClosestPatrolPoint();
                     }
+                } else
+                {
+                    _timeSincePlayerLost = 0f;
                 }
+
+                break;
         }
 
         UpdateAnimations();
     }
 
-    private void FollowPlayer
+    private void FollowPlayer()
     {
         _agent.SetDestination(player.position);
     }
@@ -96,8 +107,6 @@ public class AIController : MonoBehaviour
         GoToNextPatrolPoint();
         _isWaiting = false;
     }
-
-
 
 
 
@@ -148,7 +157,18 @@ public class AIController : MonoBehaviour
         if (patrolPoints.Length == 0) return;
         var closestIndex = 0;
         var closestDistance = float.MaxValue;
-        
- 
+
+        for (var i = 0; i < patrolPoints.Length; i++)
+        {
+            var distance = Vector3.Distance(transform.position, patrolPoints[i].position);
+            if (distance < closestDistance)
+            {
+                closestDistance = distance;
+                closestIndex = i;
+            }
+        }
+        _currentPatrolIndex = closestIndex;
+        _agent.SetDestination(patrolPoints[_currentPatrolIndex].position);
+
     }
 }
