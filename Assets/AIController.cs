@@ -18,14 +18,16 @@ public class AIController : MonoBehaviour
 
     [SerializeField] private Transform player;
     [SerializeField] private Transform[] patrolPoints;
+    [SerializeField] private Transform attackPoint;
 
     [SerializeField] private float patrolWaitTime = 2f;
     [SerializeField] private float stopAtDistance = 0.5f;
     [SerializeField] private float detectionRange = 5f;
     [SerializeField] private float viewAngle = 90f;
     [SerializeField] private float losePlayerTime = 3f;
-    [SerializeField] private float attackRange = 1.2f;
+    [SerializeField] private float attackRange = 1f;
     [SerializeField] private GameObject attackUI;
+    [SerializeField] private float stopDistance = 1.2f;
 
     private UnityEngine.AI.NavMeshAgent _agent;
     private Animator _animator;
@@ -47,7 +49,7 @@ public class AIController : MonoBehaviour
     {
         _agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
         _animator = GetComponent<Animator>();
-
+        _agent.stoppingDistance = 0.5f;
     }
 
    
@@ -64,7 +66,7 @@ public class AIController : MonoBehaviour
 
     private void Update()
     {
-        var distanceToPlayer = Vector3.Distance(player.position, transform.position);
+        var distanceToPlayer = Vector3.Distance(player.position, attackPoint.position);
 
         switch (_state)
         {
@@ -78,11 +80,12 @@ public class AIController : MonoBehaviour
                 break;
 
             case EnemyState.Following:
-                FollowPlayer();
-                if (_playerInAttackRange)
+                if (distanceToPlayer <= attackRange)
                 {
+                    Debug.Log("SWITCHING TO ATTACK");
                     _state = EnemyState.Attacking;
                     StartAttack();
+                    break;
                 }
                 if (!CanSeePlayer())
                 {
@@ -101,18 +104,22 @@ public class AIController : MonoBehaviour
 
             case EnemyState.Attacking:
                 Attack();
-                if (!_isBiting && distanceToPlayer > attackRange)
-                {
-                    _state = EnemyState.Following;
-                    _agent.isStopped = false;
+                //if (!_isBiting && distanceToPlayer > attackRange)
+                //{
+                    //_state = EnemyState.Following;
+                    //_agent.isStopped = false;
 
-                } 
+                //} 
 
                 break;
         }
-        attackUI.SetActive(_state == EnemyState.Attacking);
+        if (attackUI != null)
+        {
+            attackUI.SetActive(_state == EnemyState.Attacking);
+        }
+        Debug.Log("Current State: " + _state);
         UpdateAnimations();
-        Debug.Log("Distance to player: " + distanceToPlayer);
+        
 
     }
 
@@ -168,6 +175,7 @@ public class AIController : MonoBehaviour
 
     private void StartAttack()
     {
+        Debug.Log("START ATTACK CALLED");
         _agent.isStopped = true;
         _isBiting = true;
         if (attackUI != null)
@@ -242,5 +250,13 @@ public class AIController : MonoBehaviour
         _currentPatrolIndex = closestIndex;
         _agent.SetDestination(patrolPoints[_currentPatrolIndex].position);
 
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (attackPoint == null) return;
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
 }
