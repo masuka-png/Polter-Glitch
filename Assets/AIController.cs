@@ -25,9 +25,13 @@ public class AIController : MonoBehaviour
     [SerializeField] private float detectionRange = 5f;
     [SerializeField] private float viewAngle = 90f;
     [SerializeField] private float losePlayerTime = 3f;
+<<<<<<< HEAD
     [SerializeField] private float attackRange = 1f;
     [SerializeField] private GameObject attackUI;
     [SerializeField] private float stopDistance = 1.2f;
+=======
+    [SerializeField] private float attackRange = 1.2f;
+>>>>>>> parent of b95cfad (Newest update)
 
     private UnityEngine.AI.NavMeshAgent _agent;
     private Animator _animator;
@@ -36,7 +40,6 @@ public class AIController : MonoBehaviour
     private bool _isWaiting;
     private float _timeSincePlayerLost;
     private bool _isBiting;
-    private bool _playerInAttackRange;
 
 
     private void Start()
@@ -49,20 +52,12 @@ public class AIController : MonoBehaviour
     {
         _agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
         _animator = GetComponent<Animator>();
+<<<<<<< HEAD
         _agent.stoppingDistance = 0.5f;
+=======
+>>>>>>> parent of b95cfad (Newest update)
     }
 
-   
-
-    public void OnPlayerEnteredAttackRange()
-    {
-        _playerInAttackRange = true;
-    }
-
-    public void OnPlayerExitedAttackRange()
-    {
-        _playerInAttackRange = false;
-    }
 
     private void Update()
     {
@@ -80,6 +75,10 @@ public class AIController : MonoBehaviour
                 break;
 
             case EnemyState.Following:
+<<<<<<< HEAD
+=======
+                FollowPlayer();
+>>>>>>> parent of b95cfad (Newest update)
                 if (distanceToPlayer <= attackRange)
                 {
                     Debug.Log("SWITCHING TO ATTACK");
@@ -104,6 +103,7 @@ public class AIController : MonoBehaviour
 
             case EnemyState.Attacking:
                 Attack();
+<<<<<<< HEAD
                 //if (!_isBiting && distanceToPlayer > attackRange)
                 //{
                     //_state = EnemyState.Following;
@@ -120,7 +120,18 @@ public class AIController : MonoBehaviour
         Debug.Log("Current State: " + _state);
         UpdateAnimations();
         
+=======
+                if (!_isBiting && distanceToPlayer > attackRange)
+                {
+                    _state = EnemyState.Following;
+                    _agent.isStopped = false;
+                } 
 
+                break;
+        }
+>>>>>>> parent of b95cfad (Newest update)
+
+        UpdateAnimations();
     }
 
     private void FollowPlayer()
@@ -178,14 +189,6 @@ public class AIController : MonoBehaviour
         Debug.Log("START ATTACK CALLED");
         _agent.isStopped = true;
         _isBiting = true;
-        if (attackUI != null)
-        {
-            attackUI.SetActive(true);
-        }
-        else
-        {
-            Debug.LogError("attackUI is NOT assigned!");
-        }
         _animator.SetTrigger(Bite);
     }
 
