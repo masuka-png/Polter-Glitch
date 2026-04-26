@@ -25,6 +25,7 @@ public class AIController : MonoBehaviour
     [SerializeField] private float viewAngle = 90f;
     [SerializeField] private float losePlayerTime = 3f;
     [SerializeField] private float attackRange = 1.2f;
+    [SerializeField] private GameObject attackUI;
 
     private UnityEngine.AI.NavMeshAgent _agent;
     private Animator _animator;
@@ -33,6 +34,7 @@ public class AIController : MonoBehaviour
     private bool _isWaiting;
     private float _timeSincePlayerLost;
     private bool _isBiting;
+    private bool _playerInAttackRange;
 
 
     private void Start()
@@ -45,8 +47,20 @@ public class AIController : MonoBehaviour
     {
         _agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
         _animator = GetComponent<Animator>();
+
     }
 
+   
+
+    public void OnPlayerEnteredAttackRange()
+    {
+        _playerInAttackRange = true;
+    }
+
+    public void OnPlayerExitedAttackRange()
+    {
+        _playerInAttackRange = false;
+    }
 
     private void Update()
     {
@@ -65,7 +79,7 @@ public class AIController : MonoBehaviour
 
             case EnemyState.Following:
                 FollowPlayer();
-                if (distanceToPlayer <= attackRange)
+                if (_playerInAttackRange)
                 {
                     _state = EnemyState.Attacking;
                     StartAttack();
@@ -91,12 +105,15 @@ public class AIController : MonoBehaviour
                 {
                     _state = EnemyState.Following;
                     _agent.isStopped = false;
+
                 } 
 
                 break;
         }
-
+        attackUI.SetActive(_state == EnemyState.Attacking);
         UpdateAnimations();
+        Debug.Log("Distance to player: " + distanceToPlayer);
+
     }
 
     private void FollowPlayer()
@@ -153,6 +170,14 @@ public class AIController : MonoBehaviour
     {
         _agent.isStopped = true;
         _isBiting = true;
+        if (attackUI != null)
+        {
+            attackUI.SetActive(true);
+        }
+        else
+        {
+            Debug.LogError("attackUI is NOT assigned!");
+        }
         _animator.SetTrigger(Bite);
     }
 
