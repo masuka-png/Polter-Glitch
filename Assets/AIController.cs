@@ -5,7 +5,8 @@ using System.Collections;
 public enum EnemyState
 {
     Patrolling,
-    Following
+    Following,
+    Attacking
 }
 
 
@@ -13,6 +14,7 @@ public class AIController : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private static readonly int IsWalking = Animator.StringToHash("IsWalking");
+    private static readonly int Bite = Animator.StringToHash("Bite");
 
     [SerializeField] private Transform player;
     [SerializeField] private Transform[] patrolPoints;
@@ -22,6 +24,7 @@ public class AIController : MonoBehaviour
     [SerializeField] private float detectionRange = 5f;
     [SerializeField] private float viewAngle = 90f;
     [SerializeField] private float losePlayerTime = 3f;
+    [SerializeField] private float attackRange = 1.2f;
 
     private UnityEngine.AI.NavMeshAgent _agent;
     private Animator _animator;
@@ -29,6 +32,7 @@ public class AIController : MonoBehaviour
     private int _currentPatrolIndex;
     private bool _isWaiting;
     private float _timeSincePlayerLost;
+    private bool _isBiting;
 
 
     private void Start()
@@ -61,18 +65,33 @@ public class AIController : MonoBehaviour
 
             case EnemyState.Following:
                 FollowPlayer();
+                if (distanceToPlayer <= attackRange)
+                {
+                    _state = EnemyState.Attacking;
+                    StartAttack();
+                }
                 if (!CanSeePlayer())
                 {
                     _timeSincePlayerLost += Time.deltaTime;
                     if (_timeSincePlayerLost >= losePlayerTime)
                     {
                         _state = EnemyState.Patrolling;
-                        GotoClosestPatrolPoint();
+                        GoToClosestPatrolPoint();
                     }
                 } else
                 {
                     _timeSincePlayerLost = 0f;
                 }
+
+                break;
+
+            case EnemyState.Attacking:
+                Attack();
+                if (!_isBiting && distanceToPlayer > attackRange)
+                {
+                    _state = EnemyState.Following;
+                    _agent.isStopped = false;
+                } 
 
                 break;
         }
@@ -85,7 +104,29 @@ public class AIController : MonoBehaviour
         _agent.SetDestination(player.position);
     }
 
+    private void Attack()
+    {
+        _agent.isStopped = true;
 
+        var direction = (player.position - transform.position).normalized;
+        direction.y = 0f;
+
+        if (direction != Vector3.zero)
+        {
+            transform.rotation = Quaternion.LookRotation(direction);
+        }
+
+        if (!_isBiting)
+        {
+            _isBiting = true;
+            _animator.SetTrigger(Bite);
+        }
+    }
+
+    public void OnBiteAnimationEnd()
+    {
+        _isBiting = false;
+    }
 
     private void Patrol()
     {
@@ -108,6 +149,12 @@ public class AIController : MonoBehaviour
         _isWaiting = false;
     }
 
+    private void StartAttack()
+    {
+        _agent.isStopped = true;
+        _isBiting = true;
+        _animator.SetTrigger(Bite);
+    }
 
 
     private void GoToNextPatrolPoint()
