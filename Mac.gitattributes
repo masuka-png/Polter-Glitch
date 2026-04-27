@@ -1,0 +1,4 @@
+*.cs text
+*.shader text
+*.cginc text
+*.hlsl text
