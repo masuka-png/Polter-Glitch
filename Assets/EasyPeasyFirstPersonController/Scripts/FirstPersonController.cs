@@ -79,6 +79,7 @@ namespace EasyPeasyFirstPersonController
         public bool useCameraTilt = true;
         public bool useClimbTilt = true;
 
+
         [Header("Debug")]
         public bool currentStateDebug = true;
 
@@ -106,6 +107,7 @@ namespace EasyPeasyFirstPersonController
 
             currentState = states.Grounded();
             currentState.EnterState();
+            
         }
 
         private void Update()
