@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
 
 
@@ -16,6 +16,7 @@ public class AIController : MonoBehaviour
     private static readonly int IsWalking = Animator.StringToHash("IsWalking");
     private static readonly int Bite = Animator.StringToHash("Bite");
 
+    [SerializeField] private Transform attackPoint;
     [SerializeField] private Transform player;
     [SerializeField] private Transform[] patrolPoints;
 
@@ -35,6 +36,9 @@ public class AIController : MonoBehaviour
     private float _timeSincePlayerLost;
     private bool _isBiting;
     private bool _playerInAttackRange;
+    public AudioSource source;
+    public AudioClip clip;
+    private PlayerUIController _playerUI;
 
 
     private void Start()
@@ -47,6 +51,7 @@ public class AIController : MonoBehaviour
     {
         _agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
         _animator = GetComponent<Animator>();
+        _playerUI = player.GetComponent<PlayerUIController>();
 
     }
 
@@ -64,7 +69,7 @@ public class AIController : MonoBehaviour
 
     private void Update()
     {
-        var distanceToPlayer = Vector3.Distance(player.position, transform.position);
+        var distanceToPlayer = Vector3.Distance(player.position, attackPoint.position);
 
         switch (_state)
         {
@@ -72,6 +77,7 @@ public class AIController : MonoBehaviour
                 Patrol();
                 if (distanceToPlayer <= detectionRange && CanSeePlayer())
                 {
+                    source.PlayOneShot(clip);
                     _state = EnemyState.Following;
                 }
 
@@ -79,11 +85,12 @@ public class AIController : MonoBehaviour
 
             case EnemyState.Following:
                 FollowPlayer();
-                if (_playerInAttackRange)
-                {
-                    _state = EnemyState.Attacking;
-                    StartAttack();
-                }
+if (distanceToPlayer <= attackRange)
+{
+    Debug.Log("ENTERING ATTACK STATE");
+    _state = EnemyState.Attacking;
+    StartAttack();
+}
                 if (!CanSeePlayer())
                 {
                     _timeSincePlayerLost += Time.deltaTime;
@@ -112,7 +119,7 @@ public class AIController : MonoBehaviour
         }
         attackUI.SetActive(_state == EnemyState.Attacking);
         UpdateAnimations();
-        Debug.Log("Distance to player: " + distanceToPlayer);
+        
 
     }
 
@@ -168,16 +175,16 @@ public class AIController : MonoBehaviour
 
     private void StartAttack()
     {
+        Debug.Log("START ATTACK CALLED");
+
         _agent.isStopped = true;
         _isBiting = true;
-        if (attackUI != null)
+
+        if (_playerUI != null)
         {
-            attackUI.SetActive(true);
+            _playerUI.ShowAttackUI(); 
         }
-        else
-        {
-            Debug.LogError("attackUI is NOT assigned!");
-        }
+
         _animator.SetTrigger(Bite);
     }
 
@@ -242,5 +249,13 @@ public class AIController : MonoBehaviour
         _currentPatrolIndex = closestIndex;
         _agent.SetDestination(patrolPoints[_currentPatrolIndex].position);
 
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (attackPoint == null) return;
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
 }
