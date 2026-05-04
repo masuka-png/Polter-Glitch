@@ -31,6 +31,7 @@ namespace EasyPeasyFirstPersonController
         private float xRotation = 0f;
         private float currentTilt;
         private float tiltVelocity;
+        [HideInInspector] public bool isInUIMode = false;
 
         public PlayerBaseState CurrentState { get => currentState; set => currentState = value; }
 
@@ -110,13 +111,37 @@ namespace EasyPeasyFirstPersonController
             
         }
 
+
+        public void EnterUIMode()
+        {
+            isInUIMode = true;
+
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+
+        public void ExitUIMode()
+        {
+            isInUIMode = false;
+
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+
+
+
         private void Update()
         {
             isGrounded = Physics.CheckSphere(groundCheck.position, 0.2f, groundMask, QueryTriggerInteraction.Ignore);
 
-            currentState.UpdateState();
-            HandleRotation();
+            if (!isInUIMode)
+            {
+                currentState.UpdateState();
+                HandleRotation();
+            }
+
             UpdateVisuals();
+
         }
 
         private void HandleRotation()

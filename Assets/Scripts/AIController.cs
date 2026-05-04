@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-
 public enum EnemyState
 {
     Patrolling,
@@ -9,10 +8,8 @@ public enum EnemyState
     Attacking
 }
 
-
 public class AIController : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     private static readonly int IsWalking = Animator.StringToHash("IsWalking");
     private static readonly int Bite = Animator.StringToHash("Bite");
 
@@ -21,124 +18,153 @@ public class AIController : MonoBehaviour
     [SerializeField] private Transform[] patrolPoints;
 
     [SerializeField] private float patrolWaitTime = 2f;
-    [SerializeField] private float stopAtDistance = 0.5f;
     [SerializeField] private float detectionRange = 5f;
     [SerializeField] private float viewAngle = 90f;
     [SerializeField] private float losePlayerTime = 3f;
     [SerializeField] private float attackRange = 1.2f;
+
+    [Header("UI")]
     [SerializeField] private GameObject attackUI;
 
     private UnityEngine.AI.NavMeshAgent _agent;
     private Animator _animator;
     private EnemyState _state = EnemyState.Patrolling;
+
     private int _currentPatrolIndex;
     private bool _isWaiting;
     private float _timeSincePlayerLost;
     private bool _isBiting;
-    private bool _playerInAttackRange;
+
     public AudioSource source;
     public AudioClip clip;
+
     private PlayerUIController _playerUI;
 
-
-    private void Start()
-    {
-        GoToNextPatrolPoint();
-    }
-
+    [Header("Player Reference")]
+    public EasyPeasyFirstPersonController.FirstPersonController controller;
 
     private void Awake()
     {
         _agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
         _animator = GetComponent<Animator>();
         _playerUI = player.GetComponent<PlayerUIController>();
-
     }
 
-   
-
-    public void OnPlayerEnteredAttackRange()
+    private void Start()
     {
-        _playerInAttackRange = true;
-    }
-
-    public void OnPlayerExitedAttackRange()
-    {
-        _playerInAttackRange = false;
+        GoToNextPatrolPoint();
     }
 
     private void Update()
     {
-        var distanceToPlayer = Vector3.Distance(player.position, attackPoint.position);
+        float distanceToPlayer = Vector3.Distance(player.position, attackPoint.position);
 
         switch (_state)
         {
             case EnemyState.Patrolling:
                 Patrol();
+
                 if (distanceToPlayer <= detectionRange && CanSeePlayer())
                 {
                     source.PlayOneShot(clip);
                     _state = EnemyState.Following;
                 }
-
                 break;
 
             case EnemyState.Following:
                 FollowPlayer();
-if (distanceToPlayer <= attackRange)
-{
-    Debug.Log("ENTERING ATTACK STATE");
-    _state = EnemyState.Attacking;
-    StartAttack();
-}
+
+                if (distanceToPlayer <= attackRange)
+                {
+                    _state = EnemyState.Attacking;
+                    StartAttack();
+                }
+
                 if (!CanSeePlayer())
                 {
                     _timeSincePlayerLost += Time.deltaTime;
+
                     if (_timeSincePlayerLost >= losePlayerTime)
                     {
                         _state = EnemyState.Patrolling;
                         GoToClosestPatrolPoint();
                     }
-                } else
+                }
+                else
                 {
                     _timeSincePlayerLost = 0f;
                 }
-
                 break;
 
             case EnemyState.Attacking:
                 Attack();
+
                 if (!_isBiting && distanceToPlayer > attackRange)
                 {
+                    StopAttack();
                     _state = EnemyState.Following;
-                    _agent.isStopped = false;
-
-                } 
-
+                }
                 break;
         }
-        attackUI.SetActive(_state == EnemyState.Attacking);
-        UpdateAnimations();
-        
 
+        UpdateAnimations();
     }
 
     private void FollowPlayer()
     {
+        _agent.isStopped = false;
         _agent.SetDestination(player.position);
+    }
+
+    private void StartAttack()
+    {
+        Debug.Log("START ATTACK");
+
+        _agent.isStopped = true;
+        _isBiting = true;
+
+        // Show UI
+        if (_playerUI != null)
+            _playerUI.ShowAttackUI();
+
+        if (attackUI != null)
+            attackUI.SetActive(true);
+
+        // 🔥 IMPORTANT: Enable UI mode
+        if (controller != null)
+            controller.EnterUIMode();
+
+        _animator.SetTrigger(Bite);
+    }
+
+    private void StopAttack()
+    {
+        Debug.Log("STOP ATTACK");
+
+        // Hide UI
+        if (_playerUI != null)
+            _playerUI.HideAttackUI();
+
+        if (attackUI != null)
+            attackUI.SetActive(false);
+
+        // 🔥 IMPORTANT: Return control to player
+        if (controller != null)
+            controller.ExitUIMode();
+
+        _agent.isStopped = false;
+        _isBiting = false;
     }
 
     private void Attack()
     {
         _agent.isStopped = true;
 
-        var direction = (player.position - transform.position).normalized;
+        Vector3 direction = (player.position - transform.position).normalized;
         direction.y = 0f;
 
         if (direction != Vector3.zero)
-        {
             transform.rotation = Quaternion.LookRotation(direction);
-        }
 
         if (!_isBiting)
         {
@@ -155,13 +181,14 @@ if (distanceToPlayer <= attackRange)
     private void Patrol()
     {
         if (_isWaiting) return;
+
         if (!_agent.pathPending && _agent.remainingDistance <= _agent.stoppingDistance)
         {
             StartCoroutine(WaitAtPatrolPoint());
         }
     }
 
-     private IEnumerator WaitAtPatrolPoint()
+    private IEnumerator WaitAtPatrolPoint()
     {
         _isWaiting = true;
         _agent.isStopped = true;
@@ -173,28 +200,33 @@ if (distanceToPlayer <= attackRange)
         _isWaiting = false;
     }
 
-    private void StartAttack()
-    {
-        Debug.Log("START ATTACK CALLED");
-
-        _agent.isStopped = true;
-        _isBiting = true;
-
-        if (_playerUI != null)
-        {
-            _playerUI.ShowAttackUI(); 
-        }
-
-        _animator.SetTrigger(Bite);
-    }
-
-
     private void GoToNextPatrolPoint()
     {
         if (patrolPoints.Length == 0) return;
 
         _agent.SetDestination(patrolPoints[_currentPatrolIndex].position);
         _currentPatrolIndex = (_currentPatrolIndex + 1) % patrolPoints.Length;
+    }
+
+    private void GoToClosestPatrolPoint()
+    {
+        if (patrolPoints.Length == 0) return;
+
+        int closestIndex = 0;
+        float closestDistance = float.MaxValue;
+
+        for (int i = 0; i < patrolPoints.Length; i++)
+        {
+            float distance = Vector3.Distance(transform.position, patrolPoints[i].position);
+            if (distance < closestDistance)
+            {
+                closestDistance = distance;
+                closestIndex = i;
+            }
+        }
+
+        _currentPatrolIndex = closestIndex;
+        _agent.SetDestination(patrolPoints[_currentPatrolIndex].position);
     }
 
     private void UpdateAnimations()
@@ -215,40 +247,21 @@ if (distanceToPlayer <= attackRange)
 
     private bool IsFacingPlayer()
     {
-        var dirToPlayer = (player.position - transform.position).normalized;
-        var angle = Vector3.Angle(transform.forward,dirToPlayer);
+        Vector3 dirToPlayer = (player.position - transform.position).normalized;
+        float angle = Vector3.Angle(transform.forward, dirToPlayer);
         return angle <= viewAngle / 2f;
     }
 
     private bool HasClearPathToPlayer()
     {
-        var dirToPlayer = player.position - transform.position;
+        Vector3 dirToPlayer = player.position - transform.position;
+
         if (Physics.Raycast(transform.position, dirToPlayer.normalized, out RaycastHit hit, dirToPlayer.magnitude))
         {
             return hit.transform == player;
         }
 
         return true;
-    }
-
-    private void GoToClosestPatrolPoint()
-    {
-        if (patrolPoints.Length == 0) return;
-        var closestIndex = 0;
-        var closestDistance = float.MaxValue;
-
-        for (var i = 0; i < patrolPoints.Length; i++)
-        {
-            var distance = Vector3.Distance(transform.position, patrolPoints[i].position);
-            if (distance < closestDistance)
-            {
-                closestDistance = distance;
-                closestIndex = i;
-            }
-        }
-        _currentPatrolIndex = closestIndex;
-        _agent.SetDestination(patrolPoints[_currentPatrolIndex].position);
-
     }
 
     private void OnDrawGizmos()
