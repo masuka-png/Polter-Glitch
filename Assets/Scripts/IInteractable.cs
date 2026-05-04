@@ -1,7 +1,8 @@
 using UnityEngine;
 
-public interface IInteractable 
+public interface IInteractable
 {
-    public string InteractionPrompt { get; }
-    public bool Interact(Interactor interactor);
+ 
+    /// <pa name="interactor">Reference to the interactor component</param>
+    void Interact(Interactor interactor);
 }
