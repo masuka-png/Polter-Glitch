@@ -44,7 +44,11 @@ namespace EasyPeasyFirstPersonController
             Vector3 move = ctx.transform.right * input.x + ctx.transform.forward * input.y;
             Vector3 finalVelocity = move * speed;
             finalVelocity.y = -20f;
-            ctx.characterController.Move(finalVelocity * Time.deltaTime);
+
+            if (ctx.characterController != null && ctx.characterController.enabled && ctx.characterController.gameObject.activeInHierarchy)
+            {
+                ctx.characterController.Move(finalVelocity * Time.deltaTime);
+            }
         }
 
         public override void ExitState() { }
