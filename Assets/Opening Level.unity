@@ -9254,6 +9254,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e416b078260f7614bb768607f8994ebd, type: 3}
       insertIndex: -1
       addedObject: {fileID: 318842408}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e416b078260f7614bb768607f8994ebd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 318842410}
   m_SourcePrefab: {fileID: 100100000, guid: e416b078260f7614bb768607f8994ebd, type: 3}
 --- !u!1 &318842406 stripped
 GameObject:
@@ -9275,7 +9278,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -9296,18 +9299,34 @@ MonoBehaviour:
   _keyboardName: Security Keyboard
   _actions:
   - _actionType: 0
-    _door: {fileID: 967168044}
+    _door: {fileID: 0}
     _keyCode: 
   - _actionType: 0
-    _door: {fileID: 1309948524}
+    _door: {fileID: 0}
     _keyCode: 
   _requiresCorrectPassword: 1
   _correctPassword: 9841
+  _ui: {fileID: 0}
+  _isActive: 0
 --- !u!4 &318842409 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: e416b078260f7614bb768607f8994ebd, type: 3}
   m_PrefabInstance: {fileID: 318842405}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &318842410
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 318842406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 316d37c62799cf34ea3526b6d6ade16e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ElevatorKeyboard
+  _targetElevator: {fileID: 723763237}
+  _activeKeyboardMaterial: {fileID: 0}
 --- !u!1 &323954080
 GameObject:
   m_ObjectHideFlags: 0
@@ -19661,6 +19680,23 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
+--- !u!114 &723763237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 723763233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fd19d43c7d64b9408c62a04bb9b1d85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Elevator
+  _doors:
+  - {fileID: 967168047}
+  - {fileID: 1309948528}
+  _doorsOpenDuration: 200
+  _autoCloseDoors: 0
 --- !u!1 &726147943 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8777750621979143743, guid: fc6533e2b13f0e94688948685ab059d3, type: 3}
@@ -20263,7 +20299,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: baeb9edb282e7f34aba7bfc7a470c203, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 14.9
+      value: 15.13
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: baeb9edb282e7f34aba7bfc7a470c203, type: 3}
       propertyPath: m_LocalPosition.y
@@ -20317,6 +20353,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: -0.0191
       objectReference: {fileID: 0}
+    - target: {fileID: -6948632732658236248, guid: baeb9edb282e7f34aba7bfc7a470c203, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: -6652725513331149018, guid: baeb9edb282e7f34aba7bfc7a470c203, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -20329,9 +20369,25 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 635547659545568360, guid: baeb9edb282e7f34aba7bfc7a470c203, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: baeb9edb282e7f34aba7bfc7a470c203, type: 3}
       propertyPath: m_Name
       value: Elevator_Playtest
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: baeb9edb282e7f34aba7bfc7a470c203, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1921403343257670700, guid: baeb9edb282e7f34aba7bfc7a470c203, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2766212503428324877, guid: baeb9edb282e7f34aba7bfc7a470c203, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6100933049049988589, guid: baeb9edb282e7f34aba7bfc7a470c203, type: 3}
       propertyPath: m_LocalPosition.x
@@ -20348,18 +20404,21 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: baeb9edb282e7f34aba7bfc7a470c203, type: 3}
       insertIndex: -1
       addedObject: {fileID: 723763235}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: baeb9edb282e7f34aba7bfc7a470c203, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 723763237}
     - targetCorrespondingSourceObject: {fileID: -6948632732658236248, guid: baeb9edb282e7f34aba7bfc7a470c203, type: 3}
       insertIndex: -1
       addedObject: {fileID: 967168040}
     - targetCorrespondingSourceObject: {fileID: -6948632732658236248, guid: baeb9edb282e7f34aba7bfc7a470c203, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 967168044}
+      addedObject: {fileID: 967168047}
     - targetCorrespondingSourceObject: {fileID: 1921403343257670700, guid: baeb9edb282e7f34aba7bfc7a470c203, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1309948523}
     - targetCorrespondingSourceObject: {fileID: 1921403343257670700, guid: baeb9edb282e7f34aba7bfc7a470c203, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1309948524}
+      addedObject: {fileID: 1309948528}
   m_SourcePrefab: {fileID: 100100000, guid: baeb9edb282e7f34aba7bfc7a470c203, type: 3}
 --- !u!1 &767795215
 GameObject:
@@ -25098,12 +25157,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.009330369, y: 0.020433458, z: 0.023520874}
   m_Center: {x: 0, y: -0.0050263368, z: -1.785719e-17}
---- !u!4 &967168041 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -5678825993448753230, guid: baeb9edb282e7f34aba7bfc7a470c203, type: 3}
-  m_PrefabInstance: {fileID: 764083265}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &967168044
+--- !u!114 &967168047
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -25112,14 +25166,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 967168036}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e4be2e261c566af4f82bebf93d3ef7c0, type: 3}
+  m_Script: {fileID: 11500000, guid: 1ff7b58fcae5d8348bbc229c709cc746, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Door
-  _doorTransform: {fileID: 967168041}
-  _openAngle: 90
+  m_EditorClassIdentifier: Assembly-CSharp::ElevatorDoor
   _openSpeed: 2
-  _isLocked: 0
-  _requiredKeyCode: 
+  _closeSpeed: 2
+  _openDirection: {x: 0, y: 0, z: 1}
+  _openDistance: 1.5
 --- !u!1 &970800185
 GameObject:
   m_ObjectHideFlags: 0
@@ -29929,6 +29982,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::KeyboardUI
   _canvas: {fileID: 2111254480}
   _passwordPromptPrefab: {fileID: 0}
+  _currentPrompt: {fileID: 0}
 --- !u!1 &1221966795
 GameObject:
   m_ObjectHideFlags: 0
@@ -31431,7 +31485,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.0093303695, y: 0.020433461, z: 0.023520878}
   m_Center: {x: 0.0000000039581214, y: -0.0050263666, z: 1.1658433e-10}
---- !u!114 &1309948524
+--- !u!114 &1309948528
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -31440,19 +31494,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1309948519}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e4be2e261c566af4f82bebf93d3ef7c0, type: 3}
+  m_Script: {fileID: 11500000, guid: 1ff7b58fcae5d8348bbc229c709cc746, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Door
-  _doorTransform: {fileID: 1309948525}
-  _openAngle: 90
+  m_EditorClassIdentifier: Assembly-CSharp::ElevatorDoor
   _openSpeed: 2
-  _isLocked: 0
-  _requiredKeyCode: 
---- !u!4 &1309948525 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6100933049049988589, guid: baeb9edb282e7f34aba7bfc7a470c203, type: 3}
-  m_PrefabInstance: {fileID: 764083265}
-  m_PrefabAsset: {fileID: 0}
+  _closeSpeed: 2
+  _openDirection: {x: 0, y: 0, z: -1}
+  _openDistance: 1.5
 --- !u!1001 &1311522371
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -33259,6 +33307,8 @@ MonoBehaviour:
   _feedbackText: {fileID: 945822176}
   _submitButton: {fileID: 1193953872}
   _cancelButton: {fileID: 995228544}
+  _correctPassword: 
+  _isComplete: 0
 --- !u!114 &1345523828
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -43761,6 +43811,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: cfcefe69376628b46a6710fd8fed4916, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: cfcefe69376628b46a6710fd8fed4916, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -49006,6 +49060,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: cfcefe69376628b46a6710fd8fed4916, type: 3}
       propertyPath: m_Name
       value: Enemy (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: cfcefe69376628b46a6710fd8fed4916, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: cfcefe69376628b46a6710fd8fed4916, type: 3}
       propertyPath: m_Enabled
@@ -54646,7 +54704,7 @@ Transform:
   m_GameObject: {fileID: 9156347145008399877}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 6.32, y: 0, z: -2.74}
+  m_LocalPosition: {x: -39.132, y: 12.06, z: 53.095}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -54689,7 +54747,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2922308556bc98e4898cb3309250e781, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkSpeed: 3
+  walkSpeed: 10
   sprintSpeed: 5
   crouchSpeed: 1.5
   jumpSpeed: 0
