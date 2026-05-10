@@ -32,6 +32,7 @@ namespace EasyPeasyFirstPersonController
         private float currentTilt;
         private float tiltVelocity;
         [HideInInspector] public bool isInUIMode = false;
+        [HideInInspector] public bool onMovingPlatform = false;
 
         public PlayerBaseState CurrentState { get => currentState; set => currentState = value; }
 
@@ -80,7 +81,6 @@ namespace EasyPeasyFirstPersonController
         public bool useCameraTilt = true;
         public bool useClimbTilt = true;
 
-
         [Header("Debug")]
         public bool currentStateDebug = true;
 
@@ -108,14 +108,11 @@ namespace EasyPeasyFirstPersonController
 
             currentState = states.Grounded();
             currentState.EnterState();
-            
         }
-
 
         public void EnterUIMode()
         {
             isInUIMode = true;
-
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
         }
@@ -123,12 +120,9 @@ namespace EasyPeasyFirstPersonController
         public void ExitUIMode()
         {
             isInUIMode = false;
-
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
-
-
 
         private void Update()
         {
@@ -141,7 +135,6 @@ namespace EasyPeasyFirstPersonController
             }
 
             UpdateVisuals();
-
         }
 
         private void HandleRotation()
@@ -164,9 +157,8 @@ namespace EasyPeasyFirstPersonController
         public void UpdateVisuals()
         {
             if (!useFovKick)
-            {
                 targetFov = normalFov;
-            }
+
             cam.fieldOfView = Mathf.SmoothDamp(cam.fieldOfView, targetFov, ref fovVelocity, 1f / fovChangeSpeed);
 
             landingMomentum = Mathf.Lerp(landingMomentum, 0, Time.deltaTime * 10f);
@@ -184,6 +176,7 @@ namespace EasyPeasyFirstPersonController
                 cameraParent.localPosition = new Vector3(cameraParent.localPosition.x, newY, cameraParent.localPosition.z);
             }
         }
+
         public bool HasCeiling()
         {
             float radius = characterController.radius * 0.9f;
@@ -192,6 +185,7 @@ namespace EasyPeasyFirstPersonController
 
             return Physics.SphereCast(origin, radius, Vector3.up, out _, checkDistance, groundMask, QueryTriggerInteraction.Ignore);
         }
+
         public bool CheckLedge(out Vector3 climbPosition)
         {
             climbPosition = Vector3.zero;
@@ -218,18 +212,13 @@ namespace EasyPeasyFirstPersonController
         private void OnTriggerEnter(Collider other)
         {
             if (((1 << other.gameObject.layer) & waterMask) != 0)
-            {
                 isInWater = true;
-            }
         }
 
         private void OnTriggerExit(Collider other)
         {
             if (((1 << other.gameObject.layer) & waterMask) != 0)
-            {
                 isInWater = false;
-            }
         }
-
     }
 }
