@@ -2,10 +2,12 @@ using UnityEngine;
 
 public class ElevatorKeyboard : MonoBehaviour, IInteractable
 {
-    [SerializeField] private Elevator _targetElevator;
+    [SerializeField] private ElevatorController _targetElevator;
     [SerializeField] private Material _activeKeyboardMaterial;
+    [SerializeField] private AudioClip _keyboardBeepSound;
     private Material _originalMaterial;
     private MeshRenderer _meshRenderer;
+    private AudioSource _audioSource;
     private float _feedbackDuration = 0.5f;
     private float _feedbackTimer = 0f;
     private bool _showingFeedback = false;
@@ -22,6 +24,12 @@ public class ElevatorKeyboard : MonoBehaviour, IInteractable
         if (_meshRenderer != null)
         {
             _originalMaterial = _meshRenderer.material;
+        }
+
+        _audioSource = GetComponent<AudioSource>();
+        if (_audioSource == null)
+        {
+            _audioSource = gameObject.AddComponent<AudioSource>();
         }
     }
 
@@ -46,6 +54,12 @@ public class ElevatorKeyboard : MonoBehaviour, IInteractable
         
         // Trigger the elevator
         _targetElevator.OpenDoors();
+        
+        // Play beep sound
+        if (_keyboardBeepSound != null && _audioSource != null)
+        {
+            _audioSource.PlayOneShot(_keyboardBeepSound);
+        }
         
         // Visual feedback
         ShowActivationFeedback();
