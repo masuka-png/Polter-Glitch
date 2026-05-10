@@ -43,7 +43,7 @@ namespace EasyPeasyFirstPersonController
             Vector2 input = ctx.input.moveInput;
             Vector3 move = ctx.transform.right * input.x + ctx.transform.forward * input.y;
             Vector3 finalVelocity = move * speed;
-            finalVelocity.y = -20f;
+            finalVelocity.y = ctx.onMovingPlatform ? 0f : -20f;
 
             if (ctx.characterController != null && ctx.characterController.enabled && ctx.characterController.gameObject.activeInHierarchy)
             {
@@ -56,26 +56,15 @@ namespace EasyPeasyFirstPersonController
         public override void CheckSwitchStates()
         {
             if (ctx.input.jump && ctx.isGrounded)
-            {
                 SwitchState(factory.Jumping());
-            }
             else if (ctx.input.slide && ctx.input.sprint)
-            {
                 SwitchState(factory.Sliding());
-            }
             else if (!ctx.isGrounded)
-            {
                 SwitchState(factory.Fall());
-            }
             else if (ctx.input.crouch && ctx.isGrounded)
-            {
                 SwitchState(factory.Crouching());
-            }
             else if (ctx.isInWater)
-            {
                 SwitchState(factory.Swimming());
-            }
-
         }
     }
 }
