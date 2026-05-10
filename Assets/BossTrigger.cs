@@ -43,6 +43,9 @@ public class BossTrigger : MonoBehaviour
         if (triggered) return;
         triggered = true;
 
+        // Disable the trigger so it never fires again
+        GetComponent<Collider>().enabled = false;
+
         // 1. Disappear the entry platform
         if (entryPlatform != null)
             entryPlatform.SetActive(false);
