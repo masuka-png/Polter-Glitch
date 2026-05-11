@@ -4,6 +4,7 @@ using System.Collections;
 public class ServerRack : MonoBehaviour
 {
     [Header("Settings")]
+    public bool startsRaised = false; 
     public float riseHeight = 2f;        // How far above the platform surface it rises
     public float riseSpeed = 3f;
     public float sinkSpeed = 3f;
@@ -14,10 +15,17 @@ public class ServerRack : MonoBehaviour
 
     void Start()
     {
-        // Current position is the hidden position (below platform surface)
-        _hiddenPosition = transform.localPosition;
-        _raisedPosition = _hiddenPosition + Vector3.up * riseHeight;
-    }
+        if (startsRaised)
+        {
+            _raisedPosition = transform.localPosition;
+            _hiddenPosition = _raisedPosition - Vector3.up * riseHeight;
+        }
+        else
+        {
+            _hiddenPosition = transform.localPosition;
+            _raisedPosition = _hiddenPosition + Vector3.up * riseHeight;
+        }
+}
 
     public void Rise()
     {
@@ -27,12 +35,12 @@ public class ServerRack : MonoBehaviour
     }
 
     public void Sink()
-    {
+    {  
+        Debug.Log("Sink called, hidden position: " + _hiddenPosition + " current: " + transform.localPosition);
         if (_animationCoroutine != null)
             StopCoroutine(_animationCoroutine);
         _animationCoroutine = StartCoroutine(Animate(_hiddenPosition, sinkSpeed));
     }
-
     public IEnumerator SinkAndWait()
     {
         Sink();

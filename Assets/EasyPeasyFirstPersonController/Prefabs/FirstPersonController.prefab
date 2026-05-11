@@ -230,6 +230,7 @@ MonoBehaviour:
   moveDirection: {x: 0, y: 0, z: 0}
   isGrounded: 0
   isInUIMode: 0
+  onMovingPlatform: 0
   normalFov: 60
   sprintFov: 70
   slideFovBoost: 5
