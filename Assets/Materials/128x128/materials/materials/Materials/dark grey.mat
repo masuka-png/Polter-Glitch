@@ -51,6 +51,7 @@ Material:
     - _Cull: 2
     - _DstBlend: 0
     - _DstBlendAlpha: 0
+    - _Smoothness: 0
     - _Surface: 0
     - _ZWrite: 1
     m_Colors: []
