@@ -5,25 +5,24 @@ using System.Collections.Generic;
 
 public class ElevatorController : MonoBehaviour, IInteractable
 {
-    [Header("Door Settings")]
+    
     [SerializeField] private List<ElevatorDoor> _doors = new List<ElevatorDoor>();
     [SerializeField] private float _doorsOpenDuration = 3f;
     [SerializeField] private bool _autoCloseDoors = true;
 
-    [Header("Fake Movement Settings")]
+
     [SerializeField] private float _fakeTravelDuration = 3f;
     [SerializeField] private float _moveDelay = 1f;
 
-    [Header("Audio")]
     [SerializeField] private AudioSource _audioSource;
     [SerializeField] private AudioClip _doorsOpenSound;
     [SerializeField] private AudioClip _doorsCloseSound;
     [SerializeField] private AudioClip _elevatorMovingSound;
 
-    [Header("Camera")]
+
     [SerializeField] private ElevatorCameraManager _cameraManager;
 
-    [Header("Scene Transition")]
+
     [SerializeField] private string _destinationScene;
     [SerializeField] private float _sceneLoadDelay = 3f;
 
@@ -66,7 +65,7 @@ public class ElevatorController : MonoBehaviour, IInteractable
     {
         if (_doorsOpened) return;
 
-        Debug.Log("Elevator doors opening!");
+
 
         foreach (ElevatorDoor door in _doors)
         {
@@ -91,7 +90,7 @@ public class ElevatorController : MonoBehaviour, IInteractable
     {
         if (!_doorsOpened) return;
 
-        Debug.Log("Elevator doors closing!");
+ 
 
         foreach (ElevatorDoor door in _doors)
         {
@@ -108,7 +107,7 @@ public class ElevatorController : MonoBehaviour, IInteractable
 
     public void PlayerEntered(GameObject player)
     {
-        Debug.Log("Player entered elevator!");
+
 
     
         CloseDoors();
@@ -145,7 +144,6 @@ public class ElevatorController : MonoBehaviour, IInteractable
     {
         _elevatorMoving = true;
 
-        Debug.Log("Elevator travelling...");
 
 
         if (_elevatorMovingSound != null && _audioSource != null)
@@ -158,12 +156,8 @@ public class ElevatorController : MonoBehaviour, IInteractable
 
         _elevatorMoving = false;
 
-        Debug.Log("Elevator arrived at destination!");
-    }
 
-    /// <summary>
-    /// Resets elevator state
-    /// </summary>
+    }
     public void ResetPosition()
     {
         transform.position = _startPosition;

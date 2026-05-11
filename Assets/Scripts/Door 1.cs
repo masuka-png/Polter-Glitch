@@ -7,7 +7,7 @@ public class Door : MonoBehaviour, IInteractable
     [SerializeField] private float _openAngle = 90f;
     [SerializeField] private float _openSpeed = 2f;
     [SerializeField] private bool _isLocked = false;
-    [SerializeField] private string _requiredKeyCode = ""; // Leave empty if no key needed
+    [SerializeField] private string _requiredKeyCode = ""; 
     
     private Quaternion _closedRotation;
     private Quaternion _openRotation;
@@ -64,27 +64,21 @@ public class Door : MonoBehaviour, IInteractable
         _isAnimating = false;
     }
     
-    /// <summary>
-    /// Lock the door and optionally set a required key code
-    /// </summary>
+
     public void LockDoor(string requiredKeyCode = "")
     {
         _isLocked = true;
         _requiredKeyCode = requiredKeyCode;
     }
     
-    /// <summary>
-    /// Unlock the door
-    /// </summary>
+
     public void UnlockDoor()
     {
         _isLocked = false;
         _requiredKeyCode = "";
     }
     
-    /// <summary>
-    /// Unlock the door if the correct key code is provided
-    /// </summary>
+
     public bool TryUnlockWithCode(string keyCode)
     {
         if (!_isLocked || _requiredKeyCode != keyCode)
