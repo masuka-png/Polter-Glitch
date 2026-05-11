@@ -10,6 +10,9 @@ public class BossTrigger : MonoBehaviour
     [Header("TV Screen")]
     public Material eyeballMaterial;
 
+    [Header("Intro Object")]
+    public ServerRack introObject;
+
     [Header("References")]
     public PlatformManager platformManager;
 
@@ -42,7 +45,11 @@ public class BossTrigger : MonoBehaviour
             }
         }
 
-        // 3. Tell PlatformManager to start rising
+        // 3. Sink the intro object
+        if (introObject != null)
+            introObject.Sink();
+
+        // 4. Tell PlatformManager to start rising
         if (platformManager != null)
             platformManager.StartRising();
     }
