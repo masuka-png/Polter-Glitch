@@ -7,8 +7,10 @@ public class Door : MonoBehaviour, IInteractable
     [SerializeField] private float _openAngle = 90f;
     [SerializeField] private float _openSpeed = 2f;
     [SerializeField] private bool _isLocked = false;
-    [SerializeField] private string _requiredKeyCode = ""; 
-    
+    [SerializeField] private string _requiredKeyCode = "";
+
+    public AudioSource audioSource;
+    public AudioClip openSound;
     private Quaternion _closedRotation;
     private Quaternion _openRotation;
     private bool _isOpen = false;
@@ -42,6 +44,7 @@ public class Door : MonoBehaviour, IInteractable
         
         _isOpen = !_isOpen;
         _animationCoroutine = StartCoroutine(AnimateDoor(_isOpen));
+        audioSource.PlayOneShot(openSound);
     }
     
     private IEnumerator AnimateDoor(bool opening)
