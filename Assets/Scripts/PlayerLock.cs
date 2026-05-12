@@ -1,21 +1,16 @@
 using UnityEngine;
 using EasyPeasyFirstPersonController;
-using System.Collections.Generic;
 
 public class PlayerLock : MonoBehaviour
 {
     [Header("References")]
     public Transform risingPlatform;
 
-    [Header("Checkpoints")]
-    public List<float> teleportAtY;
-    public List<float> releaseAtY;
-    public List<Transform> teleportTargets;
-
     private FirstPersonController _fpc;
     private bool _locked = false;
-    private int _nextCheckpoint = 0;
-    private Transform _currentTarget;
+    private Vector3 _lockedPosition;
+    private float _platformYAtLock;
+    private float _localOffsetY;
 
     void Awake()
     {
@@ -24,38 +19,25 @@ public class PlayerLock : MonoBehaviour
 
     void Update()
     {
-        if (_nextCheckpoint < teleportAtY.Count && _nextCheckpoint < teleportTargets.Count)
-        {
-            if (risingPlatform.position.y >= teleportAtY[_nextCheckpoint])
-            {
-                TeleportAndLock(teleportTargets[_nextCheckpoint]);
-                _nextCheckpoint++;
-            }
-        }
-
         if (!_locked) return;
-        Debug.Log("Player is locked, pinning position");
 
-        transform.position = _currentTarget.position;
+        // Follow platform's Y movement while keeping X and Z fixed
+        float platformDelta = risingPlatform.position.y - _platformYAtLock;
+        Vector3 newPos = _lockedPosition;
+        newPos.y = _lockedPosition.y + platformDelta;
+        transform.position = newPos;
         _fpc.moveDirection = Vector3.zero;
-
-        int currentCheckpoint = _nextCheckpoint - 1;
-        if (currentCheckpoint >= 0 && currentCheckpoint < releaseAtY.Count)
-        {
-            if (risingPlatform.position.y >= releaseAtY[currentCheckpoint])
-                Release();
-        }
     }
 
     public void TeleportAndLock(Transform target)
     {
-        _currentTarget = target;
-        transform.position = target.position;
+        _lockedPosition = target.position;
+        _platformYAtLock = risingPlatform.position.y;
+        transform.position = _lockedPosition;
         _locked = true;
-        Debug.Log("TeleportAndLock called, locked: " + _locked + " target: " + target.name);
     }
 
-    private void Release()
+    public void Release()
     {
         _locked = false;
     }

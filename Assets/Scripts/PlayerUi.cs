@@ -1,12 +1,21 @@
 using UnityEngine;
+using UnityEngine.UI;
+using EasyPeasyFirstPersonController;
 
 public class PlayerUIController : MonoBehaviour
 {
     [SerializeField] private GameObject attackUI;
     [SerializeField] private CharacterController characterController;
     [SerializeField] private PlatformManager platformManager;
+    [SerializeField] private GraphicRaycaster hackUIRaycaster;
 
+    private FirstPersonController _fpc;
     private bool _isUIActive;
+
+    private void Awake()
+    {
+        _fpc = GetComponent<FirstPersonController>();
+    }
 
     public void ShowAttackUI()
     {
@@ -20,8 +29,11 @@ public class PlayerUIController : MonoBehaviour
         if (characterController != null)
             characterController.enabled = false;
 
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        if (hackUIRaycaster != null)
+            hackUIRaycaster.enabled = false;
+
+        if (_fpc != null)
+            _fpc.EnterUIMode();
     }
 
     public void HideAttackUI()
@@ -36,11 +48,13 @@ public class PlayerUIController : MonoBehaviour
         if (characterController != null)
             characterController.enabled = true;
 
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        if (hackUIRaycaster != null)
+            hackUIRaycaster.enabled = true;
+
+        if (_fpc != null)
+            _fpc.ExitUIMode();
     }
 
-    // Wire this to the Continue button's OnClick in the Inspector
     public void OnContinuePressed()
     {
         HideAttackUI();
@@ -49,7 +63,6 @@ public class PlayerUIController : MonoBehaviour
             platformManager.RespawnPlayer();
     }
 
-    // Wire this to the Main Menu button's OnClick in the Inspector
     public void OnMainMenuPressed()
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");

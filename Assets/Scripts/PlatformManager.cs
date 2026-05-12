@@ -104,11 +104,22 @@ public class PlatformManager : MonoBehaviour
     private void StopAtLevel(int levelIndex)
     {
         _isStopped = true;
+        _playerOnPlatform = false;
+        if (_playerFPC != null) _playerFPC.onMovingPlatform = false;
         _currentLevel = levelIndex;
 
         Vector3 pos = transform.position;
         pos.y = levels[levelIndex].stopHeight;
         transform.position = pos;
+
+        // Release player lock when platform stops
+        GameObject player = GameObject.FindWithTag(playerTag);
+        if (player != null)
+        {
+            PlayerLock playerLock = player.GetComponent<PlayerLock>();
+            if (playerLock != null)
+            playerLock.Release();
+        }
 
         _navMeshSurface.BuildNavMesh();
 
@@ -132,6 +143,24 @@ public class PlatformManager : MonoBehaviour
             }
 
             _activeEnemies.Add(enemy);
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag(playerTag))
+        {
+            _playerOnPlatform = false;
+            if (_playerFPC != null) _playerFPC.onMovingPlatform = false;
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag(playerTag))
+        {
+            _playerOnPlatform = true;
+            if (_playerFPC != null) _playerFPC.onMovingPlatform = true;
         }
     }
 
@@ -166,8 +195,6 @@ public class PlatformManager : MonoBehaviour
 
     public void OnPlayerReachedComputer()
     {
-        if (computerTrigger != null)
-            computerTrigger.Reset();
 
         foreach (GameObject enemy in _activeEnemies)
         {
@@ -194,6 +221,9 @@ public class PlatformManager : MonoBehaviour
 
         if (_currentLevel >= 0 && levels[_currentLevel].rackFormation != null)
             yield return StartCoroutine(levels[_currentLevel].rackFormation.SinkAllAndWait());
+
+        if (computerTrigger != null)
+            computerTrigger.Reset();
 
         _isSinking = false;
         _isStopped = false;

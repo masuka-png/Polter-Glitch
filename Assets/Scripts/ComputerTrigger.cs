@@ -4,29 +4,20 @@ public class ComputerTrigger : MonoBehaviour
 {
     [SerializeField] private PlatformManager _platformManager;
     [SerializeField] private PlayerLock _playerLock;
-    [SerializeField] private Transform _teleportTarget;  // assign per-trigger in inspector
-    
-    private bool _triggered = false;
+    [SerializeField] private Transform _teleportTarget;
 
     public void Reset()
     {
-        _triggered = false;
+        // kept for PlatformManager compatibility
     }
 
-    private void OnTriggerEnter(Collider other)
+    public void FireTrigger()
     {
-        Debug.Log("ComputerTrigger hit by: " + other.name + " tag: " + other.tag);
-    
-        if (_triggered) return;
-        if (!other.CompareTag("Player")) return;
+        Debug.Log("FireTrigger - playerLock null? " + (_playerLock == null) + " target null? " + (_teleportTarget == null));
 
-        _triggered = true;
-    
-        Debug.Log("PlayerLock null? " + (_playerLock == null) + " Target null? " + (_teleportTarget == null));
-    
         if (_playerLock != null && _teleportTarget != null)
-        _playerLock.TeleportAndLock(_teleportTarget);
-    
+            _playerLock.TeleportAndLock(_teleportTarget);
+
         _platformManager.OnPlayerReachedComputer();
     }
 }

@@ -15,6 +15,8 @@ public class BossTrigger : MonoBehaviour
 
     [Header("References")]
     public PlatformManager platformManager;
+    public PlayerLock playerLock;
+    public Transform teleportTarget;
 
     private bool triggered = false;
 
@@ -24,7 +26,6 @@ public class BossTrigger : MonoBehaviour
         if (triggered) return;
         triggered = true;
 
-        // Disable trigger so it never fires again
         GetComponent<Collider>().enabled = false;
 
         // 1. Disappear the entry platform
@@ -49,7 +50,11 @@ public class BossTrigger : MonoBehaviour
         if (introObject != null)
             introObject.Sink();
 
-        // 4. Tell PlatformManager to start rising
+        // 4. Teleport and lock player
+        if (playerLock != null && teleportTarget != null)
+            playerLock.TeleportAndLock(teleportTarget);
+
+        // 5. Tell PlatformManager to start rising
         if (platformManager != null)
             platformManager.StartRising();
     }
