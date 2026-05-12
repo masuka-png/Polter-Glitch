@@ -14,7 +14,7 @@ public class LoadingFade : MonoBehaviour
 
     IEnumerator FadeSequence()
     {
-        // Keep visible
+
         yield return new WaitForSeconds(visibleTime);
 
         float timer = 0f;
@@ -30,7 +30,7 @@ public class LoadingFade : MonoBehaviour
 
         canvasGroup.alpha = 0f;
 
-        // Optional: disable object after fade
+
         gameObject.SetActive(false);
     }
 }
