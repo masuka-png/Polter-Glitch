@@ -4,6 +4,7 @@ public class PlayerUIController : MonoBehaviour
 {
     [SerializeField] private GameObject attackUI;
     [SerializeField] private CharacterController characterController;
+    [SerializeField] private PlatformManager platformManager;
 
     private bool _isUIActive;
 
@@ -18,7 +19,6 @@ public class PlayerUIController : MonoBehaviour
 
         if (characterController != null)
             characterController.enabled = false;
-
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -36,9 +36,22 @@ public class PlayerUIController : MonoBehaviour
         if (characterController != null)
             characterController.enabled = true;
 
-
-
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+    }
+
+    // Wire this to the Continue button's OnClick in the Inspector
+    public void OnContinuePressed()
+    {
+        HideAttackUI();
+
+        if (platformManager != null)
+            platformManager.RespawnPlayer();
+    }
+
+    // Wire this to the Main Menu button's OnClick in the Inspector
+    public void OnMainMenuPressed()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
     }
 }

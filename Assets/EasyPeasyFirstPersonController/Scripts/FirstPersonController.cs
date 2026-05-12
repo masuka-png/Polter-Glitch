@@ -21,6 +21,8 @@ namespace EasyPeasyFirstPersonController
         public Transform groundCheck;
         public LayerMask groundMask;
 
+        public GameObject attackUI; // Drag your AttackUI from the Hierarchy into this slot
+
         [HideInInspector] public CharacterController characterController;
         [HideInInspector] public IInputManager input;
         [HideInInspector] public Vector3 moveDirection;
@@ -126,6 +128,8 @@ namespace EasyPeasyFirstPersonController
 
         private void Update()
         {
+
+            
             isGrounded = Physics.CheckSphere(groundCheck.position, 0.2f, groundMask, QueryTriggerInteraction.Ignore);
 
             if (!isInUIMode)
@@ -135,6 +139,8 @@ namespace EasyPeasyFirstPersonController
             }
 
             UpdateVisuals();
+
+            
         }
 
         private void HandleRotation()

@@ -67,6 +67,6 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "Polter-Glitch-New-Main.slnx",
+    "dotnet.defaultSolution": "Polter-Glitch.slnx",
     "dotnet.enableWorkspaceBasedDevelopment": false
 }

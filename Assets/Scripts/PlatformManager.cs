@@ -2,25 +2,36 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using EasyPeasyFirstPersonController;
+using Unity.AI.Navigation;
+
+[System.Serializable]
+public class EnemySpawnData
+{
+    public GameObject prefab;
+    public Transform spawnPoint;
+    public Transform[] patrolPoints;
+}
+
+[System.Serializable]
+public class PlatformLevel
+{
+    public float stopHeight;
+    public EnemySpawnData[] enemies;
+    public GameObject[] levelGeometry;
+    public ServerRackFormation rackFormation;
+    public Transform checkpointPosition;   // Where player respawns on death
+}
 
 public class PlatformManager : MonoBehaviour
 {
-    [System.Serializable]
-    public class PlatformLevel
-    {
-        public float stopHeight;
-        public GameObject[] enemyPrefabs;
-        public Transform[] spawnPoints;
-        public GameObject[] levelGeometry;
-        public ServerRackFormation rackFormation;  // Formation for this level
-    }
-
     [Header("Platform Settings")]
     public float riseSpeed = 2f;
     public float slowRiseSpeed = 0.5f;
 
+    public GameObject globalAttackUI;
+
     [Header("Platform Mesh")]
-    public Renderer platformRenderer;              // Drag the platform mesh renderer here
+    public Renderer platformRenderer;
 
     [Header("Levels")]
     public PlatformLevel[] levels;
@@ -37,22 +48,29 @@ public class PlatformManager : MonoBehaviour
 
     private CharacterController _playerController;
     private FirstPersonController _playerFPC;
+    private Transform _playerTransform;
     private bool _playerOnPlatform = false;
+    private NavMeshSurface _navMeshSurface;
+
+    void Awake()
+    {
+        _navMeshSurface = GetComponentInChildren<NavMeshSurface>();
+        _navMeshSurface.BuildNavMesh();
+    }
 
     void Start()
     {
-        // Hide the platform mesh
         if (platformRenderer != null)
             platformRenderer.enabled = false;
     }
 
     public void StartRising()
     {
-        // Grab player reference once when rising starts
         GameObject player = GameObject.FindWithTag(playerTag);
         if (player != null)
         {
             _playerOnPlatform = true;
+            _playerTransform = player.transform;
             _playerController = player.GetComponentInChildren<CharacterController>();
             _playerFPC = player.GetComponent<FirstPersonController>();
             if (_playerFPC != null) _playerFPC.onMovingPlatform = true;
@@ -66,7 +84,6 @@ public class PlatformManager : MonoBehaviour
     {
         if (!_isRising || _isStopped || _isSinking) return;
 
-        // Check if we've reached the next stop
         int nextLevel = _currentLevel + 1;
         if (nextLevel < levels.Length)
         {
@@ -77,11 +94,9 @@ public class PlatformManager : MonoBehaviour
             }
         }
 
-        // Move platform up
         float speed = _currentLevel == -1 ? riseSpeed : slowRiseSpeed;
         transform.Translate(Vector3.up * speed * Time.deltaTime, Space.World);
 
-        // Carry player
         if (_playerOnPlatform && _playerController != null)
             _playerController.Move(Vector3.up * speed * Time.deltaTime);
     }
@@ -91,34 +106,69 @@ public class PlatformManager : MonoBehaviour
         _isStopped = true;
         _currentLevel = levelIndex;
 
-        // Snap to exact height
         Vector3 pos = transform.position;
         pos.y = levels[levelIndex].stopHeight;
         transform.position = pos;
 
-        // Rise server racks for this level
+        _navMeshSurface.BuildNavMesh();
+
         if (levels[levelIndex].rackFormation != null)
             levels[levelIndex].rackFormation.RiseAll();
 
-        // Spawn enemies
         PlatformLevel level = levels[levelIndex];
-        for (int i = 0; i < level.enemyPrefabs.Length; i++)
+        foreach (EnemySpawnData data in level.enemies)
         {
-            if (i >= level.spawnPoints.Length) break;
-            if (level.enemyPrefabs[i] == null || level.spawnPoints[i] == null) continue;
+            if (data.prefab == null || data.spawnPoint == null) continue;
 
-            GameObject enemy = Instantiate(level.enemyPrefabs[i], level.spawnPoints[i].position, level.spawnPoints[i].rotation);
+            GameObject enemy = Instantiate(data.prefab, data.spawnPoint.position, data.spawnPoint.rotation);
+
+            AIController ai = enemy.GetComponent<AIController>();
+            if (ai != null)
+            {
+                ai.player = _playerTransform;
+                ai.controller = _playerFPC;
+                ai.patrolPoints = data.patrolPoints;
+                ai.attackUI = this.globalAttackUI;
+            }
+
             _activeEnemies.Add(enemy);
+        }
+    }
+
+    public void RespawnPlayer()
+    {
+        if (_currentLevel < 0) return;
+
+        Transform checkpoint = levels[_currentLevel].checkpointPosition;
+        if (checkpoint == null) return;
+
+        // Teleport player to checkpoint
+        if (_playerController != null)
+        {
+            _playerController.enabled = false;
+            _playerTransform.position = checkpoint.position;
+            _playerController.enabled = true;
+        }
+
+        // Resume player control
+        if (_playerFPC != null)
+            _playerFPC.ExitUIMode();
+
+        // Reset all active enemies back to patrol
+        foreach (GameObject enemy in _activeEnemies)
+        {
+            if (enemy == null) continue;
+            AIController ai = enemy.GetComponent<AIController>();
+            if (ai != null)
+                ai.ResetToPatrol();
         }
     }
 
     public void OnPlayerReachedComputer()
     {
-        // Reset computer trigger so it can fire again
         if (computerTrigger != null)
             computerTrigger.Reset();
 
-        // Despawn all active enemies
         foreach (GameObject enemy in _activeEnemies)
         {
             if (enemy != null)
@@ -126,7 +176,6 @@ public class PlatformManager : MonoBehaviour
         }
         _activeEnemies.Clear();
 
-        // Despawn current level geometry
         if (_currentLevel >= 0)
         {
             foreach (GameObject geo in levels[_currentLevel].levelGeometry)
@@ -136,7 +185,6 @@ public class PlatformManager : MonoBehaviour
             }
         }
 
-        // Sink racks then resume rising
         StartCoroutine(SinkThenRise());
     }
 

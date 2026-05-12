@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public enum EnemyState
@@ -14,8 +14,8 @@ public class AIController : MonoBehaviour
     private static readonly int Bite = Animator.StringToHash("Bite");
 
     [SerializeField] private Transform attackPoint;
-    [SerializeField] private Transform player;
-    [SerializeField] private Transform[] patrolPoints;
+    public Transform player;
+    public Transform[] patrolPoints;
 
     [SerializeField] private float patrolWaitTime = 2f;
     [SerializeField] private float detectionRange = 5f;
@@ -24,7 +24,7 @@ public class AIController : MonoBehaviour
     [SerializeField] private float attackRange = 1.2f;
 
     [Header("UI")]
-    [SerializeField] private GameObject attackUI;
+    public GameObject attackUI;
 
     private UnityEngine.AI.NavMeshAgent _agent;
     private Animator _animator;
@@ -110,6 +110,25 @@ public class AIController : MonoBehaviour
         UpdateAnimations();
     }
 
+    public void ResetToPatrol()
+    {
+        // Stop any attack state
+        _isBiting = false;
+        _isWaiting = false;
+        _timeSincePlayerLost = 0f;
+
+        // Hide attack UI
+        if (attackUI != null)
+            attackUI.SetActive(false);
+
+        // Resume agent
+        _agent.isStopped = false;
+
+        // Switch back to patrol
+        _state = EnemyState.Patrolling;
+        GoToClosestPatrolPoint();
+    }
+
     private void FollowPlayer()
     {
         _agent.isStopped = false;
@@ -123,14 +142,12 @@ public class AIController : MonoBehaviour
         _agent.isStopped = true;
         _isBiting = true;
 
-        // Show UI
         if (_playerUI != null)
             _playerUI.ShowAttackUI();
 
         if (attackUI != null)
             attackUI.SetActive(true);
 
-        // 🔥 IMPORTANT: Enable UI mode
         if (controller != null)
             controller.EnterUIMode();
 
@@ -141,14 +158,12 @@ public class AIController : MonoBehaviour
     {
         Debug.Log("STOP ATTACK");
 
-        // Hide UI
         if (_playerUI != null)
             _playerUI.HideAttackUI();
 
         if (attackUI != null)
             attackUI.SetActive(false);
 
-        // 🔥 IMPORTANT: Return control to player
         if (controller != null)
             controller.ExitUIMode();
 
