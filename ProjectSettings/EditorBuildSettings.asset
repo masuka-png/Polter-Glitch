@@ -15,7 +15,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Opening Level.unity
     guid: 9ae8ef49ab34b95438719c480b2b7796
   - enabled: 1
-    path: Assets/Scenes/Boss Fight.unity
-    guid: a7205df8355c601469157ce7297edd78
+    path: Assets/Scenes/Boss Level.unity
+    guid: b2d7be4ec2767394e97737a93785f634
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
