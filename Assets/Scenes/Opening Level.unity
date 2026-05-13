@@ -29949,6 +29949,8 @@ MonoBehaviour:
   _closeSpeed: 2
   _openDirection: {x: 0, y: 0, z: 1}
   _openDistance: 1.5
+  _autoOpenOnStart: 0
+  _autoOpenDelay: 3
 --- !u!1 &970800185
 GameObject:
   m_ObjectHideFlags: 0
@@ -37701,6 +37703,8 @@ MonoBehaviour:
   _closeSpeed: 2
   _openDirection: {x: 0, y: 0, z: -1}
   _openDistance: 1.5
+  _autoOpenOnStart: 0
+  _autoOpenDelay: 3
 --- !u!1 &1314346210
 GameObject:
   m_ObjectHideFlags: 0
@@ -52417,6 +52421,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   attackUI: {fileID: 870827032}
   characterController: {fileID: 9156347145008399879}
+  platformManager: {fileID: 0}
+  hackUIRaycaster: {fileID: 0}
 --- !u!1 &1803614854
 GameObject:
   m_ObjectHideFlags: 0
@@ -63818,6 +63824,7 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 1
+  attackUI: {fileID: 0}
   characterController: {fileID: 0}
   moveDirection: {x: 0, y: 0, z: 0}
   isGrounded: 0
