@@ -21,6 +21,9 @@ public class WinSequence : MonoBehaviour
     [SerializeField] private bool _bold = false;
     [SerializeField] private bool _italic = false;
 
+    [Header("References")]
+    [SerializeField] private ComputerFaceDisplay _computerFaceDisplay;
+
     private Canvas _canvas;
     private Image _fadeImage;
     private TextMeshProUGUI _winLabel;
@@ -42,7 +45,6 @@ public class WinSequence : MonoBehaviour
         canvasObj.AddComponent<CanvasScaler>();
         canvasObj.AddComponent<GraphicRaycaster>();
 
-        // Black fade panel
         GameObject panelObj = new GameObject("FadePanel");
         panelObj.transform.SetParent(canvasObj.transform, false);
         _fadeImage = panelObj.AddComponent<Image>();
@@ -53,7 +55,6 @@ public class WinSequence : MonoBehaviour
         rt.offsetMin = Vector2.zero;
         rt.offsetMax = Vector2.zero;
 
-        // Win text
         GameObject textObj = new GameObject("WinText");
         textObj.transform.SetParent(canvasObj.transform, false);
         _winLabel = textObj.AddComponent<TextMeshProUGUI>();
@@ -62,7 +63,6 @@ public class WinSequence : MonoBehaviour
         _winLabel.alignment = TextAlignmentOptions.Center;
         _winLabel.color = new Color(_winTextColor.r, _winTextColor.g, _winTextColor.b, 0);
 
-        // Apply bold and italic
         if (_bold && _italic)
             _winLabel.fontStyle = FontStyles.Bold | FontStyles.Italic;
         else if (_bold)
@@ -81,12 +81,12 @@ public class WinSequence : MonoBehaviour
         if (_winFont != null)
             _winLabel.font = _winFont;
 
-        // Disable until win sequence triggers
         canvasObj.SetActive(false);
     }
 
     public void TriggerWinSequence()
     {
+        _computerFaceDisplay?.TriggerWinMaterial();
         StartCoroutine(WinSequenceRoutine());
     }
 
@@ -102,7 +102,6 @@ public class WinSequence : MonoBehaviour
 
         yield return new WaitForSeconds(_cinematicDuration);
 
-        // Fade to black
         float elapsed = 0f;
         while (elapsed < _fadeDuration)
         {
@@ -116,7 +115,6 @@ public class WinSequence : MonoBehaviour
 
         yield return new WaitForSeconds(_textFadeDelay);
 
-        // Fade in text
         elapsed = 0f;
         while (elapsed < _fadeDuration)
         {

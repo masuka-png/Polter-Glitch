@@ -8,6 +8,7 @@ public class PlayerUIController : MonoBehaviour
     [SerializeField] private CharacterController characterController;
     [SerializeField] private PlatformManager platformManager;
     [SerializeField] private GraphicRaycaster hackUIRaycaster;
+    [SerializeField] private ServerRackTrigger[] _serverRackTriggers;
 
     private FirstPersonController _fpc;
     private bool _isUIActive;
@@ -58,6 +59,18 @@ public class PlayerUIController : MonoBehaviour
     public void OnContinuePressed()
     {
         HideAttackUI();
+
+        foreach (var trigger in _serverRackTriggers)
+        {
+            if (trigger != null)
+                trigger.CancelHack();
+        }
+
+        foreach (var enemy in EnemyResetter.AllEnemies)
+        {
+            if (enemy != null)
+                enemy.ResetToStart();
+        }
 
         if (platformManager != null)
             platformManager.RespawnPlayer();
