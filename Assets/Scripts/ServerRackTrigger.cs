@@ -13,6 +13,7 @@ public class ServerRackTrigger : MonoBehaviour
     [SerializeField] private HackUI _hackUI;
     [SerializeField] private ServerRack _serverRack;
     [SerializeField] private ComputerTrigger _computerTrigger;
+    [SerializeField] private ComputerFaceDisplay _computerFaceDisplay;
 
     [Header("Fall On Hack Complete")]
     [SerializeField] private GameObject _serverRackObject;
@@ -56,6 +57,18 @@ public class ServerRackTrigger : MonoBehaviour
             if (_progress >= 1f)
                 CompleteHack();
         }
+    }
+
+    public void CancelHack()
+    {
+        _playerInRange = false;
+        _isHacking = false;
+        _progress = 0f;
+
+        _hackUI.ShowPrompt(false);
+        _hackUI.ShowProgressBar(false);
+        _hackUI.SetProgress(0f, _hacksCompleted, _totalHacks);
+        _computerFaceDisplay?.StopFlicker();
     }
 
     private void CompleteHack()
@@ -116,6 +129,7 @@ public class ServerRackTrigger : MonoBehaviour
         _playerInRange = true;
         _serverRack?.Rise();
         _hackUI.ShowPrompt(true);
+        _computerFaceDisplay?.StartFlicker();
     }
 
     private void OnTriggerExit(Collider other)
@@ -129,5 +143,6 @@ public class ServerRackTrigger : MonoBehaviour
         _hackUI.ShowPrompt(false);
         _hackUI.ShowProgressBar(false);
         _hackUI.SetProgress(0f, _hacksCompleted, _totalHacks);
+        _computerFaceDisplay?.StopFlicker();
     }
 }

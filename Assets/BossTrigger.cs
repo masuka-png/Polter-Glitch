@@ -18,6 +18,7 @@ public class BossTrigger : MonoBehaviour
     public PlayerLock playerLock;
     public Transform teleportTarget;
 
+    public bool HasTriggered => triggered;
     private bool triggered = false;
 
     void OnTriggerEnter(Collider other)

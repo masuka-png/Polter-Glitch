@@ -418,6 +418,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: cfcefe69376628b46a6710fd8fed4916, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3581577501595666579}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: cfcefe69376628b46a6710fd8fed4916, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8863367274672036054}
     - targetCorrespondingSourceObject: {fileID: -3196511607817033700, guid: cfcefe69376628b46a6710fd8fed4916, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3384636885652671331}
@@ -475,6 +478,18 @@ MonoBehaviour:
   source: {fileID: 527295268003081007}
   clip: {fileID: 8300000, guid: 9d922ecd7e9939b4c83a9af1038d461a, type: 3}
   controller: {fileID: 7277881963257104771, guid: edb883a636be27749b804d60264c2369, type: 3}
+--- !u!114 &8863367274672036054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 55869218963359644}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a4557994610483428a3c06101e7e7ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyResetter
 --- !u!4 &832511097473916198 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: cfcefe69376628b46a6710fd8fed4916, type: 3}

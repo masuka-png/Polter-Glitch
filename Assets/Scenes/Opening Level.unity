@@ -22989,7 +22989,7 @@ MonoBehaviour:
   _doorsCloseSound: {fileID: 8300000, guid: 4b7868aa9a570974a872754b78aa963e, type: 3}
   _elevatorMovingSound: {fileID: 8300000, guid: b446c95bc20cad946aefe63a553e9841, type: 3}
   _cameraManager: {fileID: 957391573}
-  _destinationScene: Boss Fight
+  _destinationScene: Boss Level
   _sceneLoadDelay: 3
 --- !u!1 &726147943 stripped
 GameObject:
