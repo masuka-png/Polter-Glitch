@@ -23,6 +23,7 @@ public class WinSequence : MonoBehaviour
 
     [Header("References")]
     [SerializeField] private ComputerFaceDisplay _computerFaceDisplay;
+    [SerializeField] private BossTrigger _bossTrigger;
 
     private Canvas _canvas;
     private Image _fadeImage;
@@ -102,16 +103,29 @@ public class WinSequence : MonoBehaviour
 
         yield return new WaitForSeconds(_cinematicDuration);
 
+        // Grab boss music
+        AudioSource bossMusic = _bossTrigger != null ? _bossTrigger.bossMusicSource : null;
+        float startVolume = bossMusic != null ? bossMusic.volume : 1f;
         float elapsed = 0f;
+
+        // Fade screen to black and music out simultaneously
         while (elapsed < _fadeDuration)
         {
             elapsed += Time.deltaTime;
-            float alpha = Mathf.Clamp01(elapsed / _fadeDuration);
-            _fadeImage.color = new Color(0, 0, 0, alpha);
+            float t = Mathf.Clamp01(elapsed / _fadeDuration);
+
+            _fadeImage.color = new Color(0, 0, 0, t);
+
+            if (bossMusic != null)
+                bossMusic.volume = Mathf.Lerp(startVolume, 0f, t);
+
             yield return null;
         }
 
         _fadeImage.color = new Color(0, 0, 0, 1);
+
+        if (bossMusic != null)
+            bossMusic.Stop();
 
         yield return new WaitForSeconds(_textFadeDelay);
 

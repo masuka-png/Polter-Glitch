@@ -18,6 +18,13 @@ public class BossTrigger : MonoBehaviour
     public PlayerLock playerLock;
     public Transform teleportTarget;
 
+    [Header("Music")]
+    public AudioSource sceneAudioSource;
+    public AudioClip bossMusicClip;
+
+    // WinSequence reads this to fade the music out
+    [HideInInspector] public AudioSource bossMusicSource;
+
     public bool HasTriggered => triggered;
     private bool triggered = false;
 
@@ -58,5 +65,19 @@ public class BossTrigger : MonoBehaviour
         // 5. Tell PlatformManager to start rising
         if (platformManager != null)
             platformManager.StartRising();
+
+        // 6. Cut scene music and start boss music instantly
+        if (sceneAudioSource != null)
+            sceneAudioSource.Stop();
+
+        if (bossMusicClip != null)
+        {
+            bossMusicSource = gameObject.AddComponent<AudioSource>();
+            bossMusicSource.clip = bossMusicClip;
+            bossMusicSource.loop = true;
+            bossMusicSource.volume = 1f;
+            bossMusicSource.spatialBlend = 0f;
+            bossMusicSource.Play();
+        }
     }
 }

@@ -421,6 +421,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: cfcefe69376628b46a6710fd8fed4916, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8863367274672036054}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: cfcefe69376628b46a6710fd8fed4916, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8225651199150215026}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: cfcefe69376628b46a6710fd8fed4916, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -5550140884386466079}
     - targetCorrespondingSourceObject: {fileID: -3196511607817033700, guid: cfcefe69376628b46a6710fd8fed4916, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3384636885652671331}
@@ -490,6 +496,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a4557994610483428a3c06101e7e7ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyResetter
+--- !u!114 &8225651199150215026
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 55869218963359644}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2256acf9ec1e04d4683b8a5a8f22b61e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  ambientClip: {fileID: 0}
+  volume: 0.5
+--- !u!114 &-5550140884386466079
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 55869218963359644}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2256acf9ec1e04d4683b8a5a8f22b61e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAmbientAudio
+  ambientClip: {fileID: 8300000, guid: 7b68f27af88bf5c45b8adda6b7e6f956, type: 3}
+  volume: 0.15
 --- !u!4 &832511097473916198 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: cfcefe69376628b46a6710fd8fed4916, type: 3}
